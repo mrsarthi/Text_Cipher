@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Encrypt & Decrypt</title>
+	<style>
+		/* General Page Styling */
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+		}
+
+		h1 {
+			color: #333;
+			text-align: center;
+			width: 100%;
+			position: absolute;
+			top: 10px;
+		}
+
+		/* Flex container for side-by-side layout */
+		.container {
+			display: flex;
+			gap: 20px;
+			justify-content: center;
+			width: 80%;
+			max-width: 900px;
+		}
+
+		/* Styling for each section */
+		.box {
+			background: white;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+			width: 100%;
+			text-align: center;
+		}
+
+		/* Form Styling */
+		form {
+			margin: 20px 0;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+
+		textarea {
+			width: 85%;
+			height: 60px;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			font-size: 16px;
+			resize: none;
+		}
+
+		button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			padding: 10px 15px;
+			font-size: 16px;
+			cursor: pointer;
+			border-radius: 5px;
+			margin-top: 10px;
+			width: 100%;
+		}
+
+		button:hover {
+			background-color: #0056b3;
+		}
+
+		.result-box {
+			background-color: #f9f9f9;
+			padding: 10px;
+			border-radius: 5px;
+			margin-top: 10px;
+			font-weight: bold;
+			word-wrap: break-word;
+		}
+
+		/* Responsive Design */
+		@media (max-width: 768px) {
+			.container {
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Text Encryption & Decryption</h1>
+
+	<div class="container">
+		<!-- Encryption Section -->
+		<div class="box">
+			<h2>Encryption</h2>
+			<form id="encryptForm">
+				<label for="message">Enter Text to Encrypt:</label>
+				<textarea id="message" name="message"></textarea>
+				<button type="submit">Encrypt</button>
+			</form>
+
+			<h3>Encrypted Message:</h3>
+			<p id="encryptedResult" class="result-box"></p>
+		</div>
+
+		<!-- Decryption Section -->
+		<div class="box">
+			<h2>Decryption</h2>
+			<form id="decryptForm">
+				<label for="encryptedMessage">Enter Encrypted Text to Decrypt:</label>
+				<textarea id="encryptedMessage" name="encryptedMessage"></textarea>
+				<button type="submit">Decrypt</button>
+			</form>
+
+			<h3>Decrypted Message:</h3>
+			<p id="decryptedResult" class="result-box"></p>
+		</div>
+	</div>
+
+	<script>
+		// Handle Encryption
+		document.getElementById("encryptForm").addEventListener("submit", async function (event) {
+			event.preventDefault();
+			let message = document.getElementById("message").value;
+
+			let response = await fetch("/encrypt", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ message: message })
+			});
+
+			let data = await response.json();
+			document.getElementById("encryptedResult").innerText = data.encrypted;
+		});
+
+		// Handle Decryption
+		document.getElementById("decryptForm").addEventListener("submit", async function (event) {
+			event.preventDefault();
+			let encryptedMessage = document.getElementById("encryptedMessage").value;
+
+			let response = await fetch("/decrypt", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ message: encryptedMessage })
+			});
+
+			let data = await response.json();
+			document.getElementById("decryptedResult").innerText = data.decrypted;
+		});
+	</script>
+
+</body>
+
+</html>
